@@ -20,18 +20,26 @@ def automatizar_git():
         # 2.a. git add .
         subprocess.run(["git", "add", "."], check=True) # con check true, si hay un error se lanza una excepción
 
+        # CONTROL DE CAMBIOS: Verificamos si realmente hay algo para commitear
+        # 'git status --porcelain' devuelve texto si hay cambios, o vacío si todo está limpio
+        status = subprocess.run(["git", "status", "--porcelain"], capture_output=True, text=True, check=True)
+        
+        if not status.stdout.strip():
+            print("▶️ No se detectaron cambios ni scripts nuevos. Repositorio al día.")
+            return # Salimos limpiamente sin lanzar errores
+
         # 2.b. git commit -m "mensaje"
         subprocess.run(["git", "commit", "-m", mensaje_commit], check=True)
         
         # 2.c. git push origin main (cambiá 'main' por 'master' si tu rama se llama así)
         subprocess.run(["git", "push", "origin", "main"], check=True)
         
-        print("¡Subida a GitHub completada con éxito!")
+        print("🚀¡Subida a GitHub completada con éxito!")
         
     except subprocess.CalledProcessError as e:
-        print(f"Error al ejecutar comando de Git: {e}")
+        print(f"❌Error al ejecutar comando de Git: {e}")
     except Exception as e:
-        print(f"Ocurrió un error inesperado: {e}")
+        print(f"❌Ocurrió un error inesperado: {e}")
 
 if __name__ == "__main__":
     automatizar_git()
